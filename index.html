@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Tennis Game</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="default.css">
+        <link rel="stylesheet" href="escritorioChiquito.css" media="only screen and (max-width: 1000px)">
+        <link rel="stylesheet" href="celulares.css">
+    </head>
+    <body>
+        <div class="juego">
+            <canvas id="gameTennis" height="550" width="1000"></canvas>
+            <div id="changePropertis">
+                <div>
+                    <h2>Cambiar propiedades de Juego</h2>
+                    <hr style="width: 75%; border-color: black;"/>
+                </div>
+                <h3>Propiedades Generales</h3>
+                <table>
+                    <tr>
+                        <td>
+                            <label>Largo Juego (Actual: <span id="labelLargoJuego"></span>)</label>
+                        </td>
+                        <td>
+                            <input id="largoJuego" type="text" class="propertie textInput" placeholder="Max: ∞"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Limite de ptos. (Actual: <span id="labelLimitePtos"></span>)</label>
+                        </td>
+                        <td>
+                            <input id="limitePtos" type="text" class="propertie textInput" placeholder="Max: ∞"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Color: </label>
+                        </td>
+                        <td>
+                            <input id="colorJuego" type="color" value="#000000">
+                        </td>
+                    </tr>
+                </table>
+                <hr style="width: 50%; border-color: black;"/>
+                <h3>Propiedades de pelota</h3>
+                <table>
+                    <tr>
+                        <td>
+                            <label>Radio (Actual: <span id="labelRadio"></span>): </label>
+                        </td>
+                        <td>
+                            <input id="radioP" type="text" class="propertie textInput" placeholder="Max: ∞"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Velocidad (Actual: <span id="labelVelocidadP">5</span>): </label>
+                        </td>
+                        <td>
+                            <input id="velocidadP" type="text" class="propertie textInput" placeholder="Max: ∞">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Color: </label>
+                        </td>
+                        <td>
+                            <input id="colorP" type="color" value="#cb3234">
+                        </td>
+                    </tr>
+                </table>
+                <hr style="width: 50%; border-color: black;"/>
+                <h3>Propiedades de Jugadores</h3>
+                <table>
+                    <tr>
+                        <td>
+                            <label>Velodidad (Actual: <span id="labelVelocidadJ"></span>):</label>
+                        </td>
+                        <td>
+                            <input id="velocidadJ" type="text" class="propertie textInput" placeholder="Max: ∞">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Ancho (Actual: <span id="labelAnchoJ"></span>): </label>
+                        </td>
+                        <td>
+                            <input id="widthJ" type="text" class="propertie textInput" placeholder="Max: ∞">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Largo (Actual: <span id="labelLargoJ"></span>): </label>
+                        </td>
+                        <td>
+                            <input id="heightJ" type="text" class="propertie textInput" placeholder="Max: ∞">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Color: </label>
+                        </td>
+                        <td>
+                            <input id="colorJ" type="color" value="#ffffff">
+                        </td>
+                    </tr>
+                </table>
+                <hr style="width: 50%; border-color: black;"/>
+                <h3>Propiedades de Red</h3>
+                <table>
+                    <tr>
+                        <td>
+                            <label>Ancho (Actual: <span id="labelAnchoR"></span>): </label>
+                        </td>
+                        <td>
+                            <input id="widthR" type="text" class="propertie textInput" placeholder="Max: ∞">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Largo (Actual: <span id="labelLargoR"></span>): </label>
+                        </td>
+                        <td>
+                            <input id="heightR" type="text" class="propertie textInput" placeholder="Max: ∞">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Margen (Actual: <span id="labelMargenR"></span>): </label>
+                        </td>
+                        <td>
+                            <input id="marginR" type="text" class="propertie textInput" placeholder="Max: ∞">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Color: </label>
+                        </td>
+                        <td>
+                            <input id="colorR" type="color" value="#ffffff">
+                        </td>
+                    </tr>
+                </table>
+                <hr style="width: 50%; border-color: black;"/>
+                <button id="resetearValores" class="btnResetear">Resetar Valores</button>
+            </div>
+        </div>
+        <script>
+            // Canvas Properties
+
+            let canvas = document.getElementById("gameTennis");
+            let canvasContext = canvas.getContext("2d");
+            let framesPerSecond = 100;
+            let gameBackground = "black";
+            let widthAvailabel = document.body.scrollWidth;
+            let heightAvailabel = document.body.scrollHeight;
+            let gameStarted = false;
+            let Score1 = 0;
+            let Score2 = 0;
+            let limitScore = 7;
+            let isLimitScore = false;
+            let isPausarJuego = false;
+            let winner;
+            let timesColorClick = 0;
+            let timesColorStarted = 0;
+            let timesColorPause = 0;
+
+            // Ball Properties
+
+            let ballx = canvas.width / 2;
+            let bally = canvas.height / 2;
+            let ballRadius = 20;
+            let ballSpeed = 5;
+            let ballColor = "red";
+            let ballSpeedInicial = ballSpeed;
+            let ballDirectionX = Math.floor(Math.random() * 2) === 0 ? false : true;
+            let ballDirectionY = Math.floor(Math.random() * 2) === 0 ? false : true;
+
+            // Red Properties
+
+            let RED_HEIGHT = 50;
+            let RED_WIDTH = 6;
+            let redMargin = RED_HEIGHT / 5;
+            let redColor = "white";
+
+            // Barra Properties
+
+            let barraSpeed = 10;
+            let BARRA_HEIGHT = 100;
+            let BARRA_WIDTH = 20;
+            let barrasColor = "white";
+            let barraIzquierdaY = (canvas.height / 2) - (BARRA_HEIGHT / 2);
+            let barraDerechaY = (canvas.height / 2) - (BARRA_HEIGHT / 2);
+            let barrasMargin_Top_Bottom = 20;
+            let barrasMargin_Left_Right = 20;
+
+            // Valores por Default
+
+            let copiaLargoJuego = canvas.height;
+            let copiaLimitePtos = limitScore;
+            let copiaGameBackground = gameBackground;
+            let copiaBallRadius = ballRadius;
+            let copiaBallSpeed = ballSpeedInicial;
+            let copiaBallColor = ballColor;
+            let copiaRedHeight = RED_HEIGHT;
+            let copiaRedWidth = RED_WIDTH;
+            let copiaRedMargin = redMargin;
+            let copiaRedColor = redColor;
+            let copiaBarraSpeed = barraSpeed;
+            let copiaBarraHeight = BARRA_HEIGHT;
+            let copiaBarraWidth = BARRA_WIDTH;
+            let copiaBarraColor = barrasColor;
+            let copiaVelocidadPIntroducida = ballSpeedInicial;
+
+
+            // Document objects
+
+            let largoJuego = document.getElementById("largoJuego");
+            let labelLargoJuego = document.getElementById("labelLargoJuego");
+            let limitePtos = document.getElementById("limitePtos");
+            let labelLimitePtos = document.getElementById("labelLimitePtos");
+            let colorJuego = document.getElementById("colorJuego");
+            let radio = document.getElementById("radioP");
+            let labelRadio = document.getElementById("labelRadio");
+            let velocidadP = document.getElementById("velocidadP");
+            let labelVelocidadP = document.getElementById("labelVelocidadP");
+            let colorP = document.getElementById("colorP");
+            let velocidadJ = document.getElementById("velocidadJ");
+            let labelVelocidadJ = document.getElementById("labelVelocidadJ");
+            let widthJ = document.getElementById("widthJ");
+            let labelAnchoJ = document.getElementById("labelAnchoJ");
+            let heightJ = document.getElementById("heightJ");
+            let labelLargoJ = document.getElementById("labelLargoJ");
+            let colorJ = document.getElementById("colorJ");
+            let widthR = document.getElementById("widthR");
+            let labelAnchoR = document.getElementById("labelAnchoR");
+            let heightR = document.getElementById("heightR");
+            let labelLargoR = document.getElementById("labelLargoR");
+            let marginR = document.getElementById("marginR");
+            let labelMargenR = document.getElementById("labelMargenR");
+            let colorR = document.getElementById("colorR");
+            let btnReseteaV = document.getElementById("resetearValores");
+
+            // Events Listener
+            
+            largoJuego.addEventListener("keypress", cambiarLargoJuego);
+            limitePtos.addEventListener("keypress", cambiarLimitePtos);
+            colorJuego.addEventListener("change", cambiarColorJuego);
+            radio.addEventListener("keypress", cambiarRadio);
+            velocidadP.addEventListener("keypress", cambiarVelocidadP);
+            colorP.addEventListener("change", cambiarColorP);
+            velocidadJ.addEventListener("keypress", cambiarVelocidadJ);
+            widthJ.addEventListener("keypress", cambiarAnchoJ);
+            heightJ.addEventListener("keypress", cambiarLargoJ);
+            colorJ.addEventListener("change", cambiarColorJ);
+            widthR.addEventListener("keypress", cambiarAnchoR);
+            heightR.addEventListener("keypress", cambiarLargoR);
+            marginR.addEventListener("keypress", cambiarMargenR);
+            colorR.addEventListener("change", cambiarColorR);
+            btnReseteaV.addEventListener("click", resetearValores);
+
+            // LOGIC
+            
+                setInterval(tennisDrawObj, 1000 / framesPerSecond);
+            
+            
+            setInterval(function () {
+                ballSpeed = isPausarJuego === false? ballSpeed + 1 : ballSpeed;
+            }, 3000);
+            
+            function tennisDrawObj() {
+                canvasContext.fillStyle = gameBackground;
+                canvasContext.fillRect(0, 0, canvas.width, canvas.height);
+                for (let i = 0; i <= canvas.height; i += RED_HEIGHT + redMargin) {
+                    canvasContext.fillStyle = redColor;
+                    canvasContext.fillRect(canvas.width / 2 - RED_WIDTH / 2, i, RED_WIDTH, RED_HEIGHT);
+                }
+                canvasContext.fillStyle = barrasColor;
+                canvasContext.fillRect(barrasMargin_Left_Right, barraIzquierdaY, BARRA_WIDTH, BARRA_HEIGHT);
+                canvasContext.fillStyle = barrasColor;
+                canvasContext.fillRect((canvas.width) - (barrasMargin_Left_Right + BARRA_WIDTH), barraDerechaY, BARRA_WIDTH, BARRA_HEIGHT);
+                
+                canvasContext.font = "40pt Lucida Sans";
+                canvasContext.fillText(Score1, canvas.width/2-54, 50);
+                canvasContext.fillText(Score2, canvas.width/2+20, 50);
+                
+                cambiarLabels();
+                cambiarPlaceHolder();
+                cambiosEstadoJuego();
+            }
+            
+            function cambiosEstadoJuego() {
+                if (isLimitScore === false && gameStarted === true && isPausarJuego === false) {
+                    ballAndItsMovement();
+                    AIBarraDerecha();
+                    canvas.addEventListener("click", pausarJuego);
+                    document.addEventListener("keydown", movimientoBarrasLeft);
+                    canvas.addEventListener("mousemove", calculateMousePos);
+                    canvas.removeEventListener("click", reempezarJuego);
+                    canvas.removeEventListener("click", empezarJuego);
+                } else if (isLimitScore === true){
+                    canvasContext.fillStyle = "red";
+                    canvasContext.font = "30pt Lucida Sans";
+                    canvasContext.fillText("The winner is " + winner, canvas.width/2-220, 200);
+                    timesColorClick++;
+                    if (timesColorClick >= 50 && timesColorClick <= 140) {
+                        canvasContext.fillStyle = "black";
+                        if (timesColorClick === 140) {
+                            timesColorClick = 0;
+                        }
+                    } else {
+                        canvasContext.fillStyle = "red";
+                    }
+                    canvasContext.fillText("Click to continue", canvas.width/2-150, 400);
+                    document.removeEventListener("keydown", movimientoBarrasLeft);
+                    canvas.removeEventListener("mousemove", calculateMousePos);
+                    canvas.addEventListener("click", reempezarJuego);
+                    resetBall();
+                    createBall();
+                } else if (gameStarted === false) {
+                    timesColorStarted++;
+                    if (timesColorStarted >= 50 && timesColorStarted <= 140) {
+                        canvasContext.fillStyle = "black";
+                        if (timesColorStarted === 140) {
+                            timesColorStarted = 0;
+                        }
+                    } else {
+                        canvasContext.fillStyle = "white";
+                    }
+                    canvasContext.fillText("Click to start", canvas.width/2-164, 400);
+                    canvas.addEventListener("click", empezarJuego);
+                    resetBall();
+                    createBall();
+                } else if (isPausarJuego === true) {
+                    timesColorPause++;
+                    if (timesColorPause >= 50 && timesColorPause <= 140) {
+                        canvasContext.fillStyle = "black";
+                        if (timesColorPause === 140) {
+                            timesColorPause = 0;
+                        }
+                    } else {
+                        canvasContext.fillStyle = "white";
+                    }
+                    canvasContext.font = "30pt Lucida Sans";
+                    canvasContext.fillText("Click to continue", canvas.width/2-150, 400);
+                    document.removeEventListener("keydown", movimientoBarrasLeft);
+                    canvas.removeEventListener("mousemove", calculateMousePos);
+                    createBall();
+                }
+            }
+            
+            function resetBall() {
+                ballx = canvas.width / 2;
+                bally = canvas.height / 2;
+                ballDirectionX = Math.floor(Math.random() * 2) === 0 ? false : true;
+                ballDirectionY = Math.floor(Math.random() * 2) === 0 ? false : true;
+                ballSpeed = copiaVelocidadPIntroducida;
+            }
+
+            function ballAndItsMovement() {
+                if (ballDirectionX === false) {
+                    ballx += ballSpeed;
+                    if (ballx >= (canvas.width) - (BARRA_WIDTH + barrasMargin_Left_Right + ballRadius) && bally >= barraDerechaY && bally <= barraDerechaY + BARRA_HEIGHT) {
+                        ballx -= ballSpeed;
+                        ballDirectionX = true;
+                    } else if (ballx >= canvas.width) {
+                        Score1++;
+                        if (Score1 === limitScore) {
+                            isLimitScore = true;
+                            winner = "Player 1";
+                        }
+                        resetBall();
+                    }
+                } else if (ballDirectionX === true) {
+                    ballx -= ballSpeed;
+                    if (ballx <= (BARRA_WIDTH + barrasMargin_Left_Right + ballRadius) && bally >= barraIzquierdaY && bally <= barraIzquierdaY + BARRA_HEIGHT) {
+                        ballx += ballSpeed;
+                        ballDirectionX = false;
+                    } else if (ballx <= 0) {
+                        Score2++;
+                        if (Score2 === limitScore) {
+                            isLimitScore = true;
+                            winner = "Player 2";
+                        }
+                        resetBall();
+                    }
+                }
+                if (ballDirectionY === false) {
+                    bally += ballSpeed;
+                    if (bally >= (canvas.height) - (ballRadius)) {
+                        ballDirectionY = true;
+                    }
+                } else if (ballDirectionY === true) {
+                    bally -= ballSpeed;
+                    if (bally <= 0 + ballRadius) {
+                        ballDirectionY = false;
+                    }
+                }
+                createBall();
+            }
+            
+            function createBall () {
+                canvasContext.fillStyle = ballColor;
+                canvasContext.beginPath();
+                canvasContext.arc(ballx, bally, ballRadius, 0, Math.PI * 2, true);
+                canvasContext.fill();
+            }
+
+            function movimientoBarrasLeft(event) {
+                if (event.keyCode === 38 && barraIzquierdaY >= barrasMargin_Top_Bottom) {
+                    barraIzquierdaY -= barraSpeed*2;
+                } else if (event.keyCode === 40 && barraIzquierdaY <= (canvas.height) - (BARRA_HEIGHT + barrasMargin_Top_Bottom)) {
+                    barraIzquierdaY += barraSpeed*2;
+                }
+            }
+            
+            function AIBarraDerecha () {
+                let barraDerechaCenter = barraDerechaY + BARRA_HEIGHT/2;
+                if (ballx >= canvas.width / 2) {
+                    if (barraDerechaCenter > bally-35 && barraDerechaY >= barrasMargin_Top_Bottom) {
+                        barraDerechaY -= barraSpeed;
+                    } else if (barraDerechaCenter < bally && barraDerechaY <= (canvas.height) - (BARRA_HEIGHT + barrasMargin_Top_Bottom)) {
+                        barraDerechaY += barraSpeed;
+                    }
+                } else {
+                    if (barraDerechaY > (canvas.height / 2) - (BARRA_HEIGHT / 2)) {
+                        barraDerechaY -= barraSpeed;
+                    } else if (barraDerechaY < (canvas.height / 2) - (BARRA_HEIGHT / 2)) {
+                        barraDerechaY += barraSpeed;
+                    }
+                }
+            }
+            
+            function AIBarraIzquierda () {
+                let barraIzquierdaCenter = barraIzquierdaY + BARRA_HEIGHT/2;
+                if (ballx <= canvas.width / 2) {
+                    if (barraIzquierdaCenter > bally-35 && barraIzquierdaY >= barrasMargin_Top_Bottom) {
+                        barraIzquierdaY -= barraSpeed;
+                    } else if (barraIzquierdaCenter < bally && barraIzquierdaY <= (canvas.height) - (BARRA_HEIGHT + barrasMargin_Top_Bottom)) {
+                        barraIzquierdaY += barraSpeed;
+                    }
+                } else {
+                    if (barraIzquierdaY > (canvas.height / 2) - (BARRA_HEIGHT / 2)) {
+                        barraIzquierdaY -= barraSpeed;
+                    } else if (barraIzquierdaY < (canvas.height / 2) - (BARRA_HEIGHT / 2)) {
+                        barraIzquierdaY += barraSpeed;
+                    }
+                }
+            }
+            
+            window.onresize = function(){
+                widthAvailabel = document.body.scrollWidth;
+                heightAvailabel = document.body.scrollHeight;
+            };
+            
+            function calculateMousePos (event) {
+                let rect = canvas.getBoundingClientRect();
+                let mouseY = event.clientY - rect.top;
+                barraIzquierdaY = Math.floor(mouseY);
+            }
+            
+            function resetAll() {
+                largoJuego.value = "";
+                limitePtos.value = "";
+                radio.value = "";
+                velocidadP.value = "";
+                velocidadJ.value = "";
+                widthJ.value = "";
+                heightJ.value = "";
+                widthR.value = "";
+                heightR.value = "";
+                marginR.value = "";
+            }
+
+            function cambiarLargoJuego(event) {
+                if (event.keyCode === 13) {
+                    if (!(largoJuego.value.isNaN) && largoJuego.value >= 1) {
+                        canvas.height = parseInt(largoJuego.value);
+                        copiaLargoJuego = largoJuego.value;
+                        let ultimoNumeroLargoJuegoConFloor = Array.from((Math.floor(canvas.height / 2)).toString());
+                        ultimoNumeroLargoJuegoConFloor = parseInt(ultimoNumeroLargoJuegoConFloor[ultimoNumeroLargoJuegoConFloor.length - 1]);
+                        let ultimoNumeroLargoJuegoSinFloor = Array.from((canvas.height).toString());
+                        ultimoNumeroLargoJuegoSinFloor = parseInt(ultimoNumeroLargoJuegoSinFloor[ultimoNumeroLargoJuegoSinFloor.length - 1]);
+                        if (ultimoNumeroLargoJuegoConFloor !== 5) {
+                            switch (ultimoNumeroLargoJuegoSinFloor) {
+                                case 0:
+                                    canvas.height += 10;
+                                    break;
+                                case 1:
+                                    canvas.height += 9;
+                                    break;
+                                case 2:
+                                    canvas.height += 8;
+                                    break;
+                                case 3:
+                                    canvas.height += 7;
+                                    break;
+                                case 4:
+                                    canvas.height += 6;
+                                    break;
+                                case 6:
+                                    canvas.height += 4;
+                                    break;
+                                case 7:
+                                    canvas.height += 3;
+                                    break;
+                                case 8:
+                                    canvas.height += 2;
+                                    break;
+                                case 9:
+                                    canvas.height += 1;
+                                    break;
+                            }
+                        }
+                    } else {
+                        console.log("Introduciste mal: Largo Juego");
+                    }
+                    resetAll();
+                }
+            }
+
+            function cambiarLimitePtos() {
+                if (event.keyCode === 13) {
+                    if (!(limitePtos.value.isNaN) && limitePtos.value >= 1) {
+                        limitScore = parseInt(limitePtos.value);
+                    } else {
+                        console.log("Introduciste mal: Limite score");
+                    }
+                    resetAll();
+                }
+            }
+
+            function cambiarColorJuego() {
+                gameBackground = colorJuego.value;
+            }
+
+            function cambiarRadio(event) {
+                if (event.keyCode === 13) {
+                    if (!(radio.value.isNaN) && radio.value >= 1 && radio.value <= Math.floor(canvas.height / 2)) {
+                        ballRadius = parseInt(radio.value);
+                    } else {
+                        console.log("Introduciste mal: Radio");
+                    }
+                    resetAll();
+                }
+            }
+
+            function cambiarVelocidadP(event) {
+                if (event.keyCode === 13) {
+                    if (!(velocidadP.value.isNaN) && velocidadP.value >= 1 && velocidadP.value <= Math.floor(canvas.width / 5)) {
+                        ballSpeed = parseInt(velocidadP.value);
+                        copiaVelocidadPIntroducida = velocidadP.value;
+                    } else {
+                        console.log("Introduciste mal: Velocidad Pelota");
+                    }
+                    resetAll();
+                }
+            }
+
+            function cambiarColorP() {
+                ballColor = colorP.value;
+            }
+
+            function cambiarVelocidadJ(event) {
+                if (event.keyCode === 13) {
+                    if (!(velocidadJ.value.isNaN) && velocidadJ.value >= 1 && velocidadJ.value <= Math.floor(canvas.height / 2)) {
+                        barraSpeed = parseInt(velocidadJ.value);
+                    } else {
+                        console.log("Introduciste mal: Velocidad Jugador");
+                    }
+                    resetAll();
+                }
+            }
+
+            function cambiarAnchoJ(event) {
+                if (event.keyCode === 13) {
+                    if (!(widthJ.value.isNaN) && widthJ.value >= 1 && widthJ.value <= Math.floor(canvas.width / 2)) {
+                        BARRA_WIDTH = parseInt(widthJ.value);
+                    } else {
+                        console.log("Introduciste mal: Width Jugador");
+                    }
+                    resetAll();
+                }
+            }
+
+            function cambiarLargoJ(event) {
+                if (event.keyCode === 13) {
+                    if (!(heightJ.value.isNaN) && heightJ.value >= 1 && heightJ.value <= canvas.height - barrasMargin_Top_Bottom * 2) {
+                        BARRA_HEIGHT = parseInt(heightJ.value);
+                    } else {
+                        console.log("Introduciste mal: Height Jugador");
+                    }
+                    resetAll();
+                }
+            }
+
+            function cambiarColorJ() {
+                barrasColor = colorJ.value;
+            }
+
+            function cambiarAnchoR(event) {
+                if (event.keyCode === 13) {
+                    if (!(widthR.value.isNaN) && widthR.value >= 1 && widthR.value <= canvas.width) {
+                        RED_WIDTH = parseInt(widthR.value);
+                    } else {
+                        console.log("Introduciste mal: Width Red");
+                    }
+                    resetAll();
+                }
+            }
+
+            function cambiarLargoR(event) {
+                if (event.keyCode === 13) {
+                    if (!(heightR.value.isNaN) && heightR.value >= 1 && heightR.value <= canvas.height) {
+                        RED_HEIGHT = parseInt(heightR.value);
+                    } else {
+                        console.log("Introduciste mal: Height Red");
+                    }
+                    resetAll();
+                }
+            }
+
+            function cambiarMargenR(event) {
+                if (event.keyCode === 13) {
+                    if (!(marginR.value.isNaN) && marginR.value >= 1) {
+                        redMargin = parseInt(marginR.value);
+                    } else {
+                        console.log("Introduciste mal: Margin Red");
+                    }
+                    resetAll();
+                }
+            }
+
+            function cambiarColorR() {
+                redColor = colorR.value;
+            }
+
+            function resetearValores() {
+                canvas.height = copiaLargoJuego;
+                framesPerSecond = copiaFramesPerSecond;
+                gameBackground = copiaGameBackground;
+                ballRadius = copiaBallRadius;
+                ballSpeedInicial = copiaBallSpeed;
+                ballColor = copiaBallColor;
+                RED_HEIGHT = copiaRedHeight;
+                RED_WIDTH = copiaRedWidth;
+                redMargin = copiaRedMargin;
+                redColor = copiaRedColor;
+                barraSpeed = copiaBarraSpeed;
+                BARRA_HEIGHT = copiaBarraHeight;
+                BARRA_WIDTH = copiaBarraWidth;
+                barrasColor = copiaBarraColor;
+                copiaVelocidadPIntroducida = ballSpeedInicial;
+                resetBall();
+                cambiarLabels();
+                cambiarPlaceHolder();
+            }
+
+            function cambiarLabels() {
+                labelLargoJuego.textContent = copiaLargoJuego;
+                labelLimitePtos.textContent = limitScore;
+                labelRadio.textContent = ballRadius;
+                labelVelocidadP.textContent = ballSpeed;
+                labelVelocidadJ.textContent = barraSpeed;
+                labelAnchoJ.textContent = BARRA_WIDTH;
+                labelLargoJ.textContent = BARRA_HEIGHT;
+                labelAnchoR.textContent = RED_WIDTH;
+                labelLargoR.textContent = RED_HEIGHT;
+                labelMargenR.textContent = redMargin;
+            }
+
+            function cambiarPlaceHolder() {
+                radio.placeholder = "Max: " + Math.floor(canvas.height / 2);
+                velocidadP.placeholder = "Max: " + Math.floor(canvas.width / 5);
+                velocidadJ.placeholder = "Max: " + Math.floor(canvas.height / 2);
+                widthJ.placeholder = "Max: " + Math.floor(canvas.width / 2);
+                heightJ.placeholder = "Max: " + Math.floor(canvas.height - barrasMargin_Top_Bottom * 2);
+                widthR.placeholder = "Max: " + canvas.width;
+                heightR.placeholder = "Max: " + canvas.height;
+            }
+            
+            function empezarJuego () {
+                gameStarted = true;
+            }
+            
+            function reempezarJuego () {
+                Score1 = 0;
+                Score2 = 0;
+                isLimitScore = false;
+            }
+            
+            function pausarJuego() {
+                isPausarJuego = isPausarJuego === false? true: false;
+            }
+        </script>
+    </body>
+</html>

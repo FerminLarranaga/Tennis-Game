@@ -1,0 +1,44 @@
+@media only screen and (max-width: 270px){
+    body {
+        font-size: 5px;
+    }
+    input{
+        height: 10px;
+    }
+    .juego{
+        font-size: 10px;
+    }
+}
+
+@media only screen and (max-width: 370px) and (min-width: 271px){
+    body {
+        font-size: 7px;
+    }
+    .juego{
+        font-size: 11px;
+    }
+}
+
+@media only screen and (max-width: 480px) and (min-width: 371px){
+    body {
+        font-size: 10px;
+    }
+    .juego{
+        font-size: 11px;
+    }
+}
+
+@media only screen and (max-width: 600px) and (min-width: 481px){
+    body {
+        font-size: 12px;
+    }
+    canvas{
+        width: 90%;
+    }
+    #changePropertis{
+        width: 90%;
+    }
+    .juego {
+        font-size: 13px;
+    }
+}
